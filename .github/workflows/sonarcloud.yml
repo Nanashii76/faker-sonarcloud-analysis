@@ -37,12 +37,9 @@ jobs:
       - name: Run Faker tests and collect coverage (optional)
         run: |
           cd faker_source 
-          pip install -e .
-
+          pip install -e . 
           coverage run --source=faker,tests -m pytest tests/
-
-          cd ../ 
-          coverage xml -o coverage.xml --relative-files
+          coverage xml -o ../coverage.xml
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2.2.0
