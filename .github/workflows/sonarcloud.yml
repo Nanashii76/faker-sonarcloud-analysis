@@ -26,14 +26,14 @@ jobs:
       - name: Clone Faker Repository
         run: |
           git clone https://github.com/joke2k/faker.git faker_source
+          # CRÍTICO: Remover a pasta .git do repositório clonado
+          rm -rf faker_source/.git
 
       - name: Install dependencies for analysis
         run: |
           python -m pip install --upgrade pip
           pip install pytest coverage
-          pip install freezegun validators # Mantenha essas, pois são necessárias e funcionaram.
-          # REMOVA A LINHA ABAIXO:
-          # pip install r-e2 # Esta linha está causando o erro
+          pip install freezegun validators
 
       - name: Run Faker tests and collect coverage (optional)
         run: |
@@ -42,10 +42,6 @@ jobs:
           coverage run -m pytest tests/
           coverage xml -o ../coverage.xml
 
-      - name: Debug - List contents of faker_source
-        run: |
-          ls -alR faker_source
-    
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2.2.0
         env:
