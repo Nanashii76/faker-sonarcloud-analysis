@@ -42,6 +42,10 @@ jobs:
           coverage run -m pytest tests/
           coverage xml -o ../coverage.xml
 
+      - name: Debug - List contents of faker_source
+        run: |
+          ls -alR faker_source
+    
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2.2.0
         env:
