@@ -31,22 +31,15 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install pytest coverage
-          # Adicione as dependências que os testes do Faker precisam
-          # Você pode consultar o pyproject.toml ou setup.cfg do Faker para a lista completa
-          pip install freezegun validators # Essas são as que apareceram no erro
-          # Algumas outras comuns que o Faker pode precisar para testes:
-          pip install r-e2 # Ou outras de "dev" ou "test" do pyproject.toml
-          # O jeito mais fácil para dependências de teste é instalar os extras:
-          pip install "faker-source[test]" # Tenta instalar o grupo 'test' definido no pyproject.toml
+          pip install freezegun validators # Mantenha essas, pois são necessárias e funcionaram.
+          # REMOVA A LINHA ABAIXO:
+          # pip install r-e2 # Esta linha está causando o erro
 
-      - name: Run Faker tests and collect coverage
+      - name: Run Faker tests and collect coverage (optional)
         run: |
           cd faker_source
-          pip install -e . # Instala o Faker em modo editável
-          # Certifique-se de que os testes sejam encontrados
+          pip install -e .
           coverage run -m pytest tests/
-
-          # Gera o relatório uma pasta acima, na raiz do seu repositório de análise
           coverage xml -o ../coverage.xml
 
       - name: SonarCloud Scan
