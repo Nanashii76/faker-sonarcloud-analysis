@@ -55,4 +55,4 @@ jobs:
         uses: SonarSource/sonarcloud-github-action@v2.2.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        # Se o coverage.xml foi gerado em ../coverage.xml, o sonar-project.properties irá encontrá-lo
+        # Se o coverage.xml foi gerado em ../coverage.xml, o sonar-project.properties irá encontrá-lo !!!
