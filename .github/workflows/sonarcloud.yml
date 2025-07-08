@@ -1,4 +1,3 @@
-# .github/workflows/sonarcloud.yml (no seu novo repositório 'faker-sonarcloud-analysis')
 name: Analyze Faker with SonarCloud
 
 on:
@@ -7,7 +6,7 @@ on:
       - master # ou main
   pull_request:
     types: [opened, synchronize, reopened]
-  workflow_dispatch: # Permite disparar manualmente
+  workflow_dispatch:
 
 jobs:
   analyze:
@@ -22,37 +21,35 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.x' # Escolha a versão do Python que você quer que o Sonar analise o Faker com
+          python-version: '3.x'
 
-      # CLONAR O REPOSITÓRIO ORIGINAL DO FAKER PARA UMA SUBPASTA
       - name: Clone Faker Repository
         run: |
           git clone https://github.com/joke2k/faker.git faker_source
-          # Isso clonará o Faker para a pasta 'faker_source' dentro do seu repositório.
 
-      # Instalar dependências para a análise (se precisar de pytest/coverage para a análise do Sonar)
       - name: Install dependencies for analysis
         run: |
           python -m pip install --upgrade pip
-          # Instale dependências que o SonarScanner pode precisar para Python.
-          # Se você quiser cobertura, instale pytest e coverage aqui:
           pip install pytest coverage
-          # Se o Faker tiver dependências de runtime que precisam ser instaladas para uma análise mais completa:
-          # pip install -r faker_source/requirements-dev.txt # Exemplo, se existir e for relevante
+          # Adicione as dependências que os testes do Faker precisam
+          # Você pode consultar o pyproject.toml ou setup.cfg do Faker para a lista completa
+          pip install freezegun validators # Essas são as que apareceram no erro
+          # Algumas outras comuns que o Faker pode precisar para testes:
+          pip install r-e2 # Ou outras de "dev" ou "test" do pyproject.toml
+          # O jeito mais fácil para dependências de teste é instalar os extras:
+          pip install "faker-source[test]" # Tenta instalar o grupo 'test' definido no pyproject.toml
 
-      # Opcional: Rodar testes e coletar cobertura (se sonar.python.coverage.reportPaths estiver no properties)
-      # Execute os testes na pasta 'faker_source'
-      - name: Run Faker tests and collect coverage (optional)
+      - name: Run Faker tests and collect coverage
         run: |
-          cd faker_source # Vá para o diretório do Faker clonado
-          pip install -e . # Instale o Faker em modo editável para que os testes funcionem
-          coverage run -m pytest tests/ # Execute os testes do Faker
-          coverage xml -o ../coverage.xml # Gere o relatório UMA PASTA ACIMA, na raiz do seu repo de análise
+          cd faker_source
+          pip install -e . # Instala o Faker em modo editável
+          # Certifique-se de que os testes sejam encontrados
+          coverage run -m pytest tests/
 
-      # Executar o SonarCloud Scan
-      # O sonar-project.properties (na raiz do seu repositório de análise) apontará para 'faker_source'
+          # Gera o relatório uma pasta acima, na raiz do seu repositório de análise
+          coverage xml -o ../coverage.xml
+
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2.2.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        # Se o coverage.xml foi gerado em ../coverage.xml, o sonar-project.properties irá encontrá-lo !!!
