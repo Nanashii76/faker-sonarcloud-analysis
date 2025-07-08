@@ -3,7 +3,7 @@ name: Analyze Faker with SonarCloud
 on:
   push:
     branches:
-      - master # ou main
+      - master 
   pull_request:
     types: [opened, synchronize, reopened]
   workflow_dispatch:
@@ -26,7 +26,6 @@ jobs:
       - name: Clone Faker Repository
         run: |
           git clone https://github.com/joke2k/faker.git faker_source
-          # CRÍTICO: Remover a pasta .git do repositório clonado
           rm -rf faker_source/.git
 
       - name: Install dependencies for analysis
@@ -37,9 +36,9 @@ jobs:
 
       - name: Run Faker tests and collect coverage (optional)
         run: |
-          cd faker_source
-          pip install -e .
-          coverage run -m pytest tests/
+          cd faker_source 
+          pip install -e . 
+          coverage run --source=faker,tests -m pytest tests/
           coverage xml -o ../coverage.xml
 
       - name: SonarCloud Scan
